@@ -15,18 +15,19 @@ You should have received a copy of the GNU General Public License along with thi
 If not, see <https://www.gnu.org/licenses/>.
 */
 
-import React, { Component, ReactElement } from "react";
-import { NavBar } from "../shared/navigation/NavBar";
+import React, {Component, ReactElement} from "react";
+import {NavBar} from "../shared/navigation/NavBar";
 import Switch from "../settings/Switch";
 import Button from "@material-ui/core/Button";
 import ShelfModal from "./ShelfModal";
-import { Layout } from "../shared/components/Layout";
+import {Layout} from "../shared/components/Layout";
 import BookList from '../shared/book-display/BookList';
-import { Book } from '../shared/types/Book';
+import {Book} from '../shared/types/Book';
 import HttpClient from '../shared/http/HttpClient';
 import Endpoints from '../shared/api/endpoints';
 import "./MyBooks.css";
 import ShelfView from "../shared/book-display/ShelfView";
+import {books} from "./books";
 
 
 interface IState {
@@ -37,6 +38,7 @@ interface IState {
     didNotFinishBooks: Book[];
     toReadBooks: Book[];
     readingBooks: Book[];
+    favouriteBooks: Book[];
     searchVal: string;
 }
 
@@ -52,7 +54,8 @@ class MyBooks extends Component<Record<string, unknown>, IState> {
             didNotFinishBooks: [],
             toReadBooks: [],
             readingBooks: [],
-            searchVal: ''
+            searchVal: '',
+            favouriteBooks: []
         };
         this.onAddShelf = this.onAddShelf.bind(this);
         this.onAddShelfModalClose = this.onAddShelfModalClose.bind(this);
@@ -62,25 +65,29 @@ class MyBooks extends Component<Record<string, unknown>, IState> {
         this.toReadBooks = this.toReadBooks.bind(this);
         this.readingBooks = this.readingBooks.bind(this);
         this.getReadBooks = this.getReadBooks.bind(this);
+        this.getFavouriteBooks = this.getFavouriteBooks.bind(this);
     }
 
     componentDidMount(): void {
         this.getBooks();
         this.getReadBooks();
-        this.getDidNotFinishBooks();
-        this.toReadBooks();
-        this.readingBooks();
-        this.trackCurrentDeviceSize();
+        this.getFavouriteBooks();
+        // this.getDidNotFinishBooks();
+        // this.toReadBooks();
+        // this.readingBooks();
+        // this.trackCurrentDeviceSize();
+    }
+
+    getFavouriteBooks(): void {
+        this.setState(state => ({
+            favouriteBooks: Array.isArray(books) ? books : state.favouriteBooks
+        }));
     }
 
     getReadBooks(): void {
-        HttpClient.get(Endpoints.read).then((readBooks: Book[]) => {
-            this.setState(state => ({
-                readBooks: Array.isArray(readBooks) ? readBooks : state.readBooks
-            }));
-        }).catch((error: Record<string, string>) => {
-            console.error('error: ', error);
-        });
+        this.setState(state => ({
+            readBooks: Array.isArray(books) ? books : state.readBooks
+        }));
     }
 
     getDidNotFinishBooks(): void {
@@ -115,14 +122,9 @@ class MyBooks extends Component<Record<string, unknown>, IState> {
     }
 
     getBooks(): void {
-        HttpClient.get(Endpoints.books).then((response: Book[]) => {
-            this.setState({
-                bookList: response
-            });
-        })
-            .catch((error: Record<string, string>) => {
-                console.error('error: ', error);
-            });
+        this.setState({
+            bookList: books
+        });
     }
 
     onAddShelf(): void {
@@ -134,9 +136,9 @@ class MyBooks extends Component<Record<string, unknown>, IState> {
     trackCurrentDeviceSize(): void {
         window.onresize = (): void => {
             if (window.matchMedia("(max-width: 800px)").matches) {
-                this.setState({ showListView: true })
+                this.setState({showListView: true})
             } else {
-                this.setState({ showListView: false })
+                this.setState({showListView: false})
             }
         }
         return
@@ -164,7 +166,7 @@ class MyBooks extends Component<Record<string, unknown>, IState> {
                     disableElevation
                 >
                     Add Book
-            </Button>
+                </Button>
                 <Button
                     onClick={this.onAddShelf}
                     variant="contained"
@@ -172,17 +174,17 @@ class MyBooks extends Component<Record<string, unknown>, IState> {
                     disableElevation
                 >
                     Add Shelf
-            </Button>
+                </Button>
             </div>}>
                 <NavBar />
                 <div>
                     {
                         this.state.showListView ? (
-                            <BookList 
-                                key={this.state.bookList.length + this.state.searchVal}
-                                bookListData={this.state.bookList}
-                                searchText={this.state.searchVal} />
-                        ) :
+                                <BookList
+                                    key={this.state.bookList.length + this.state.searchVal}
+                                    bookListData={this.state.bookList}
+                                    searchText={this.state.searchVal} />
+                            ) :
                             <ShelfView
                                 key={[
                                     ...this.state.readBooks,
@@ -190,11 +192,13 @@ class MyBooks extends Component<Record<string, unknown>, IState> {
                                     ...this.state.toReadBooks,
                                     ...this.state.didNotFinishBooks
                                 ].length + this.state.searchVal}
-                                readBooks={this.state.readBooks} 
+                                readBooks={this.state.readBooks}
                                 toReadBooks={this.state.toReadBooks}
                                 didNotFinishBooks={this.state.didNotFinishBooks}
-                                readingBooks={this.state.readingBooks} 
-                                searchText={this.state.searchVal} />
+                                readingBooks={this.state.readingBooks}
+                                searchText={this.state.searchVal}
+                                favouriteBooks={this.state.favouriteBooks}
+                            />
                     }
                 </div>
                 <ShelfModal
@@ -214,4 +218,5 @@ class MyBooks extends Component<Record<string, unknown>, IState> {
         );
     }
 }
+
 export default MyBooks;

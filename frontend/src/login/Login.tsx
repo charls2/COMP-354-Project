@@ -134,22 +134,23 @@ class Login extends Component<LoginProps, IState> {
     }
 
     sendLoginRequest(): void {
-        HttpClient.login(this.state.email, this.state.password)
-            .then(response => {
-                if (response.ok) {
-                    this.props.history.push(MY_BOOKS)
-                } else {
-                    this.setState({
-                        loginFailed: 'Your email or password is incorrect. Please try again'
-                    });
-                }
-            })
-            .catch(error => {
-                this.setState({
-                    loginFailed: 'Sorry, something went wrong on our end. Please try again later.'
-                })
-                console.error('error: ', error)
-            })
+        this.props.history.push(MY_BOOKS);
+        // HttpClient.login(this.state.email, this.state.password)
+        //     .then(response => {
+        //         if (response.ok) {
+        //             this.props.history.push(MY_BOOKS)
+        //         } else {
+        //             this.setState({
+        //                 loginFailed: 'Your email or password is incorrect. Please try again'
+        //             });
+        //         }
+        //     })
+        //     .catch(error => {
+        //         this.setState({
+        //             loginFailed: 'Sorry, something went wrong on our end. Please try again later.'
+        //         })
+        //         console.error('error: ', error)
+        //     })
     }
 
     renderLoginError(): ReactElement {

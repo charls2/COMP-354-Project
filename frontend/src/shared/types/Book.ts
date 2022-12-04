@@ -12,4 +12,5 @@ export type Book = {
   bookGenre: string[];
   numberOfPages: number;
   rating: number;
+  isFavourite?: boolean;
 };

@@ -24,6 +24,7 @@ interface IShelfState {
     toReadBooks: Book[];
     readBooks: Book[];
     didNotFinishBooks: Book[];
+    favouriteBooks: Book[];
     searchText: string;
 }
 
@@ -35,7 +36,8 @@ export default class ShelfView extends Component<IShelfState, IShelfState> {
             readBooks: props.readBooks,
             readingBooks: props.readingBooks,
             toReadBooks: props.toReadBooks,
-            searchText: props.searchText
+            searchText: props.searchText,
+            favouriteBooks: props.favouriteBooks
         };
     }
 
@@ -53,6 +55,10 @@ export default class ShelfView extends Component<IShelfState, IShelfState> {
                 <ShelfCarousel 
                     title="Read"
                     books={this.state.readBooks}
+                    searchText={this.state.searchText} />
+                <ShelfCarousel
+                    title="Favourite"
+                    books={this.state.favouriteBooks}
                     searchText={this.state.searchText} />
                 <ShelfCarousel 
                     title="Did not finish"

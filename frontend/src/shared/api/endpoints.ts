@@ -21,6 +21,7 @@ export default class Endpoints {
   static readonly books: string = "api/books";
   static readonly shelf: string = "/api/shelf";
   static readonly didNotFinish: string = "/api/shelf/books/did-not-finish";
+  static readonly favourite: string = "/api/shelf/books/favourite";
   static readonly read: string = "/api/shelf/books/read";
   static readonly reading: string = "/api/shelf/books/reading";
   static readonly toRead: string = "/api/shelf/books/to-read";
