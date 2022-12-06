@@ -15,14 +15,6 @@ you should have received a copy of the gnu general public license along with thi
 if not, see <https://www.gnu.org/licenses/>.
 */
 
-export const SIGN_IN ='/sign-in' 
-export const SIGN_UP ='/sign-up'
-
 export const HOME = '/'
 export const MY_BOOKS = '/my-books'
 export const BOOK_OVERVIEW = '/books'
-export const GOAL ='/goal' 
-export const SETTINGS ='/settings'
-export const DELETE_ACCOUNT = '/delete-account'
-export const STATS = '/stats'
-export const SEARCH = '/search'

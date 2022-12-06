@@ -18,16 +18,11 @@ If not, see <https://www.gnu.org/licenses/>.
 import React from 'react'
 import './NavBar.css'
 import {
-    ExitToApp,
     MenuBook,
-    Settings,
-    TrackChanges,
-    TrendingUp,
   } from '@material-ui/icons'
-import SearchIcon from "@material-ui/icons/Search";
 import logo from '../media/logo/logo-two-lines-white@1x.png'
 import darkLogo from '../media/logo/dark-logo.png';
-import { HOME, MY_BOOKS, GOAL, STATS, SETTINGS, SIGN_IN, SEARCH} from '../routes'
+import { HOME, MY_BOOKS} from '../routes'
 import { useTheme } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom'
 import { makeStyles, MuiThemeProvider } from "@material-ui/core/styles";
@@ -74,13 +69,6 @@ export function NavBar(): JSX.Element {
             </div>
             <div className="nav-links" id="nav-links-top">
               <NavItem icon={<MenuBook />} itemText={"My Books"} goTo={MY_BOOKS} />
-              <NavItem icon={<TrackChanges />} itemText={"Goals"} goTo={GOAL} />
-              <NavItem icon={<TrendingUp />} itemText={"Statistics"} goTo={STATS} />
-              <NavItem icon={<SearchIcon />} itemText={"Search"} goTo={SEARCH} />
-            </div>
-            <div className="nav-links">
-              <NavItem icon={<Settings />} itemText={"Settings"} goTo={SETTINGS} />
-              <NavItem icon={<ExitToApp />} itemText={"Log out"} goTo={SIGN_IN} />
             </div>
         </div>
       </MuiThemeProvider>

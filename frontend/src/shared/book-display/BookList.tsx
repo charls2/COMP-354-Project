@@ -26,7 +26,6 @@ const CHAR_LIMIT = 40;
 
 export interface BookListProps {
   bookListData: Book[];
-  searchText: string;
 }
 
 interface SortingConfig {
@@ -38,27 +37,21 @@ export default class BookList extends Component <BookListProps, BookListProps> {
   constructor(props: BookListProps) {
     super(props);
     this.state = {
-      bookListData: [...props.bookListData],
-      searchText: props.searchText || ''
+      bookListData: [...props.bookListData]
     };
   }
 
-  componentDidMount(): void {
-    if(this.state.searchText !== '') {
-      this.setState({
-        bookListData: this.filterBooks()
-      });
-    }
+  addFavouriteBook(index: number): void {
+    const bookListData = this.state.bookListData;
+    bookListData[index].isFavourite = true;
+    this.setState({
+      bookListData: [...this.state.bookListData]
+    });
   }
 
   sortingConfigs: SortingConfig[] = [];
   nameToOrder = new Map<string, boolean>();
 
-  filterBooks(): Book[] {
-    return this.state.bookListData.filter(book => {
-      return book.title.toLowerCase().includes(this.state.searchText.toLowerCase());
-    });
-  }
 
   sortBooks(books: Book[]): Book[] {
     const sortedBooks = [...books];
@@ -109,7 +102,7 @@ export default class BookList extends Component <BookListProps, BookListProps> {
               Rating{getSortingIcon('rating', this.nameToOrder)}
             </div>
           </div>
-          {this.sortBooks(this.state.bookListData).map(book => (
+          {this.sortBooks(this.state.bookListData).map((book, index) => (
               <Link to={ BOOK_OVERVIEW + "/" + book.id }
                     style={{ textDecoration: 'none', color: 'black' }} key={book.id}>
                 <div className="booklist-book">
@@ -118,6 +111,7 @@ export default class BookList extends Component <BookListProps, BookListProps> {
                     {book.title.length > CHAR_LIMIT ?
                         book.title.substring(0, CHAR_LIMIT) + "..." : book.title}
                   </div>
+
                   <div className="booklist-book-title">{book.title}</div>
                   <div className="booklist-book-author">{book.author.fullName}</div>
                   <div className="booklist-book-shelf">{book.predefinedShelf.shelfName}</div>

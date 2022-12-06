@@ -12,7 +12,8 @@ export const books = [
         "bookGenre": ["funny","humor"],
         "numberOfPages": 100,
         "rating": 5,
-        "isFavourite": false
+        // remove isFavourite
+        "isFavourite": true
     },
     {
         "id": 2,

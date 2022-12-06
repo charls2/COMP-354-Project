@@ -17,29 +17,16 @@ If not, see <https://www.gnu.org/licenses/>.
 
 import React, {Component, ReactElement} from "react";
 import {NavBar} from "../shared/navigation/NavBar";
-import Switch from "../settings/Switch";
-import Button from "@material-ui/core/Button";
-import ShelfModal from "./ShelfModal";
 import {Layout} from "../shared/components/Layout";
 import BookList from '../shared/book-display/BookList';
 import {Book} from '../shared/types/Book';
-import HttpClient from '../shared/http/HttpClient';
-import Endpoints from '../shared/api/endpoints';
 import "./MyBooks.css";
-import ShelfView from "../shared/book-display/ShelfView";
 import {books} from "./books";
 
 
 interface IState {
-    showShelfModal: boolean;
-    showListView: boolean;
     bookList: Book[];
-    readBooks: Book[];
-    didNotFinishBooks: Book[];
-    toReadBooks: Book[];
-    readingBooks: Book[];
     favouriteBooks: Book[];
-    searchVal: string;
 }
 
 
@@ -47,78 +34,23 @@ class MyBooks extends Component<Record<string, unknown>, IState> {
     constructor(props: Record<string, unknown>) {
         super(props);
         this.state = {
-            showShelfModal: false,
-            showListView: false,
             bookList: [],
-            readBooks: [],
-            didNotFinishBooks: [],
-            toReadBooks: [],
-            readingBooks: [],
-            searchVal: '',
             favouriteBooks: []
         };
-        this.onAddShelf = this.onAddShelf.bind(this);
-        this.onAddShelfModalClose = this.onAddShelfModalClose.bind(this);
-        this.onToggleListView = this.onToggleListView.bind(this);
         this.getBooks = this.getBooks.bind(this);
-        this.getDidNotFinishBooks = this.getDidNotFinishBooks.bind(this);
-        this.toReadBooks = this.toReadBooks.bind(this);
-        this.readingBooks = this.readingBooks.bind(this);
-        this.getReadBooks = this.getReadBooks.bind(this);
         this.getFavouriteBooks = this.getFavouriteBooks.bind(this);
     }
 
     componentDidMount(): void {
         this.getBooks();
-        this.getReadBooks();
         this.getFavouriteBooks();
-        // this.getDidNotFinishBooks();
-        // this.toReadBooks();
-        // this.readingBooks();
-        // this.trackCurrentDeviceSize();
     }
 
     getFavouriteBooks(): void {
+        const favouriteBooks = Array.isArray(books) ? books.filter(book => book.isFavourite) : [];
         this.setState(state => ({
-            favouriteBooks: Array.isArray(books) ? books : state.favouriteBooks
+            favouriteBooks: [...favouriteBooks]
         }));
-    }
-
-    getReadBooks(): void {
-        this.setState(state => ({
-            readBooks: Array.isArray(books) ? books : state.readBooks
-        }));
-    }
-
-    getDidNotFinishBooks(): void {
-        HttpClient.get(Endpoints.didNotFinish).then((didNotFinishBooks: Book[]) => {
-            this.setState(state => ({
-                didNotFinishBooks: Array.isArray(didNotFinishBooks)
-                    ? didNotFinishBooks : state.didNotFinishBooks
-            }));
-        }).catch((error: Record<string, string>) => {
-            console.error('error: ', error);
-        });
-    }
-
-    toReadBooks(): void {
-        HttpClient.get(Endpoints.toRead).then((toReadBooks: Book[]) => {
-            this.setState(state => ({
-                toReadBooks: Array.isArray(toReadBooks) ? toReadBooks : state.toReadBooks
-            }));
-        }).catch((error: Record<string, string>) => {
-            console.error('error: ', error);
-        });
-    }
-
-    readingBooks(): void {
-        HttpClient.get(Endpoints.reading).then((readingBooks: Book[]) => {
-            this.setState(state => ({
-                readingBooks: Array.isArray(readingBooks) ? readingBooks : state.readingBooks
-            }));
-        }).catch((error: Record<string, string>) => {
-            console.error('error: ', error);
-        });
     }
 
     getBooks(): void {
@@ -127,92 +59,15 @@ class MyBooks extends Component<Record<string, unknown>, IState> {
         });
     }
 
-    onAddShelf(): void {
-        this.setState({
-            showShelfModal: true,
-        });
-    }
-
-    trackCurrentDeviceSize(): void {
-        window.onresize = (): void => {
-            if (window.matchMedia("(max-width: 800px)").matches) {
-                this.setState({showListView: true})
-            } else {
-                this.setState({showListView: false})
-            }
-        }
-        return
-    }
-
-    onAddShelfModalClose(): void {
-        this.setState({
-            showShelfModal: false,
-        });
-    }
-
-    onToggleListView(): void {
-        this.setState({
-            showListView: !this.state.showListView
-        });
-    }
-
     render(): ReactElement {
         return (
             <Layout title="My books" btn={<div className="my-book-top-buttons">
-                <Button
-                    variant="contained"
-                    className="tempButton"
-                    color="primary"
-                    disableElevation
-                >
-                    Add Book
-                </Button>
-                <Button
-                    onClick={this.onAddShelf}
-                    variant="contained"
-                    color="primary"
-                    disableElevation
-                >
-                    Add Shelf
-                </Button>
             </div>}>
                 <NavBar />
                 <div>
-                    {
-                        this.state.showListView ? (
-                                <BookList
-                                    key={this.state.bookList.length + this.state.searchVal}
-                                    bookListData={this.state.bookList}
-                                    searchText={this.state.searchVal} />
-                            ) :
-                            <ShelfView
-                                key={[
-                                    ...this.state.readBooks,
-                                    ...this.state.readingBooks,
-                                    ...this.state.toReadBooks,
-                                    ...this.state.didNotFinishBooks
-                                ].length + this.state.searchVal}
-                                readBooks={this.state.readBooks}
-                                toReadBooks={this.state.toReadBooks}
-                                didNotFinishBooks={this.state.didNotFinishBooks}
-                                readingBooks={this.state.readingBooks}
-                                searchText={this.state.searchVal}
-                                favouriteBooks={this.state.favouriteBooks}
-                            />
-                    }
-                </div>
-                <ShelfModal
-                    open={this.state.showShelfModal}
-                    onClose={this.onAddShelfModalClose}
-                />
-                <div className="my-book-switch-container">
-                    <div className="toggle-text">
-                        Shelf View
-                    </div>
-                    <Switch onClick={this.onToggleListView} />
-                    <div className="toggle-text">
-                        List View
-                    </div>
+                    <BookList
+                        key={this.state.bookList.length}
+                        bookListData={this.state.bookList}/>
                 </div>
             </Layout>
         );
